@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:business_chat/announcement/announcement_pop_up.dart';
+import 'package:business_chat/constants/routes.dart';
 
 import 'package:business_chat/providers/contact_provider.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class ContactWidget extends StatelessWidget {
     return InkWell(
       onTap: () async {
         context.read<ContactProvider>().press(contact.id);
-        await Navigator.pushNamed(context, '/Chat')
+        await Navigator.pushNamed(context, chatPageRoute)
             .then((_) => context.read<ContactProvider>().press(contact.id));
       },
       child: Container(
@@ -114,15 +115,3 @@ class ContactWidget extends StatelessWidget {
     );
   }
 }
-
-Map<String, String> m = {
-  "Faez": "CEO",
-  "Muneeb": "ACP",
-  "Jhanzaib": "DC",
-  "aez": "CEO",
-  "uneeb": "ACP",
-  "hanzaib": "DC",
-  "Fez": "CEO",
-  "Mueeb": "ACP",
-  "Jhazaib": "DC"
-};

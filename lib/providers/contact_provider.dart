@@ -1,3 +1,4 @@
+import 'package:business_chat/main.dart';
 import 'package:business_chat/pages/contact_page.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,10 @@ class ContactProvider extends ChangeNotifier {
       String key = keyList[i];
       contacts.add(Contact(name: key, role: m[key] ?? 'N?A'));
     }
+  }
+
+  void notify() {
+    notifyListeners();
   }
 
   void press(String id) {
