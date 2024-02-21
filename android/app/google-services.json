@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "921397206784",
+    "project_id": "businesschat-c3a79",
+    "storage_bucket": "businesschat-c3a79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921397206784:android:0e7a3df426ab982fcc1de5",
+        "android_client_info": {
+          "package_name": "com.example.business_chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Rs3wfJv8AaMpaB7y0tGe67LfO9f6h2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

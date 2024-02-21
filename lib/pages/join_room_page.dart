@@ -1,3 +1,4 @@
+import 'package:business_chat/pop_ups/room_joined_pop_up.dart';
 import 'package:flutter/material.dart';
 
 class JoinRoomPage extends StatelessWidget {
@@ -40,23 +41,4 @@ class JoinRoomPage extends StatelessWidget {
           ],
         ));
   }
-}
-
-Future<void> RoomJoinedPopUp(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Organisation's key"),
-        content: Text("Room successfully joined"),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Ok"))
-        ],
-      );
-    },
-  );
 }

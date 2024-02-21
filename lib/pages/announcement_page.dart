@@ -1,4 +1,4 @@
-import 'package:business_chat/announcement/announcement_pop_up.dart';
+import 'package:business_chat/pop_ups/announcement_pop_up.dart';
 import 'package:business_chat/announcement/announcement_widget.dart';
 import 'package:business_chat/providers/announcement_provider.dart';
 import 'package:flutter/material.dart';
