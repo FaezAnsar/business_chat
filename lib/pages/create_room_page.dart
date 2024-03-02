@@ -1,8 +1,15 @@
+import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/pop_ups/room_creation_pop_up.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class CreateRoomPage extends StatelessWidget {
-  const CreateRoomPage({super.key});
+  final TextEditingController _ownerName = TextEditingController();
+  final TextEditingController _ownerCnic = TextEditingController();
+  final TextEditingController _orgName = TextEditingController();
+
+  CreateRoomPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +18,7 @@ class CreateRoomPage extends StatelessWidget {
         body: Column(
           children: [
             TextFormField(
+              controller: _ownerName,
               decoration: InputDecoration(
                   hintText: "Enter Owner Name", labelText: "Owner Name"),
               // validator: (value) {
@@ -19,6 +27,7 @@ class CreateRoomPage extends StatelessWidget {
               // },
             ),
             TextFormField(
+              controller: _ownerCnic,
               decoration: InputDecoration(
                   hintText: "Enter Owner CNIC", labelText: "Owner Cnic"),
               // validator: (value) {
@@ -29,19 +38,30 @@ class CreateRoomPage extends StatelessWidget {
               // },
             ),
             TextFormField(
+              controller: _orgName,
               decoration: InputDecoration(
                   hintText: "Enter Organisation's Name",
                   labelText: "Organisation's Name"),
             ),
             Center(
-                child: TextButton(
-              onPressed: () {
-                RoomCreationPopUp(context);
-              },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.amber)),
-              child: Text("Create Room"),
-            ))
+              child: TextButton(
+                onPressed: () async {
+                  final email = await FirebaseAuth.instance.currentUser!.email!;
+
+                  final Map<String, String> map = {
+                    'type': 'create',
+                    emailColumn: email,
+                    nameColumn: _orgName.text,
+                    ownerNameColumn: _ownerName.text,
+                    ownerCnicColumn: _ownerCnic.text
+                  };
+                  RoomCreationPopUp(context, map);
+                },
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.amber)),
+                child: Text("Create Room"),
+              ),
+            )
           ],
         ));
   }

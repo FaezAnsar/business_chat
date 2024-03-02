@@ -1,10 +1,13 @@
 import 'package:business_chat/constants/routes.dart';
+import 'package:business_chat/crud/database.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-Future<void> RoomCreationPopUp(BuildContext context) {
+Future<void> RoomCreationPopUp(BuildContext context, Map map) {
   final key = Uuid().v4();
+  map.addEntries({idColumn: key}.entries);
+
   return showDialog(
     context: context,
     builder: (context) {
@@ -21,8 +24,7 @@ Future<void> RoomCreationPopUp(BuildContext context) {
                 TextButton(
                   onPressed: () async {
                     FlutterClipboard.copy(key).then(
-                      (value) {
-                        Navigator.of(context).pop();
+                      (value) async {
                         return ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Text Copied'),
@@ -46,8 +48,9 @@ Future<void> RoomCreationPopUp(BuildContext context) {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(homePageRoute, (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    homePageRoute, (route) => false,
+                    arguments: map);
               },
               child: Text("Join Room"))
         ],

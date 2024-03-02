@@ -1,5 +1,6 @@
 import 'package:business_chat/main.dart';
 import 'package:business_chat/pages/contact_page.dart';
+import 'package:business_chat/pages/home_page.dart';
 import 'package:business_chat/providers/contact_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class SearchPage extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 40.0, top: 20),
                 child: TextField(
                   onChanged: (value) {
-                    context.read<ContactProvider>().notify();
+                    // context.read<ContactProvider>().notify();
                     lettersTyped = value.length;
 
                     searchList = keyList.where((element) {
@@ -55,17 +56,20 @@ class SearchPage extends StatelessWidget {
       body: Column(children: [
         Consumer<ContactProvider>(builder: (context, value, child) {
           return Expanded(
-              child: (lettersTyped >= 1)
-                  ? ListView.builder(
-                      //counting how many matches are there between letters typed and names in database
-                      itemCount: searchList.length,
-                      itemBuilder: (context, index) {
-                        String key = searchList[index];
-                        return ContactWidget(
-                            contact: Contact(name: key, role: m[key] ?? "N/A"));
-                      },
-                    )
-                  : Container());
+              child:
+                  //(lettersTyped >= 1)
+                  //     ? ListView.builder(
+                  //         //counting how many matches are there between letters typed and names in database
+                  //         itemCount: searchList.length,
+                  //         itemBuilder: (context, index) {
+                  //           String key = searchList[index];
+                  //           return ContactWidget(
+                  //               employee:
+                  //                   Employees(name: key, role: m[key] ?? "N/A"));
+                  //         },
+                  //       )
+                  //     :
+                  Container());
         })
       ]),
     );
