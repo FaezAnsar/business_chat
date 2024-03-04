@@ -4,6 +4,7 @@ import 'package:business_chat/constants/routes.dart';
 import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/pages/announcement_page.dart';
 import 'package:business_chat/pages/contact_page.dart';
+import 'package:business_chat/pop_ups/room_joined_pop_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class _HomePageState extends State<HomePage> {
               organisationId: args[idColumn]));
           print(employee.toString());
           print(org.toString());
-        } else if (args['type'] == 'join') {
+        } else if (args['type'] == 'join' && args[alreadyJoined] == 'No') {
           _businessService.orgId = args[organisationIdColumn];
           print("ynuu,${_businessService.orgId}");
           final employee = await (_businessService.createEmployee(

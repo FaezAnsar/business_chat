@@ -1,4 +1,6 @@
+import 'package:business_chat/constants/routes.dart';
 import 'package:business_chat/crud/database.dart';
+import 'package:business_chat/pop_ups/room%20_not_joined_pop_up.dart';
 import 'package:business_chat/pop_ups/room_joined_pop_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +43,8 @@ class JoinRoomPage extends StatelessWidget {
             Center(
                 child: TextButton(
               onPressed: () async {
-                final email = await FirebaseAuth.instance.currentUser!.email!;
+                final user = FirebaseAuth.instance.currentUser!;
+                final email = user.email!;
 
                 final Map<String, String> map = {
                   'type': 'join',
@@ -52,7 +55,17 @@ class JoinRoomPage extends StatelessWidget {
                   employeeCnicColumn: _employeeCnic.text
                 };
 
-                RoomJoinedPopUp(context, map);
+                if (await organisationNotPresent(map)) {
+                  RoomNotJoinedPopUp(context, map);
+                } else {
+                  if ((await isalreadyJoined(user, map))) {
+                    map.addEntries({alreadyJoined: 'Yes'}.entries);
+                    RoomJoinedPopUp(context, map);
+                  } else {
+                    map.addEntries({alreadyJoined: 'No'}.entries);
+                    RoomJoinedPopUp(context, map);
+                  }
+                }
               },
               style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(Colors.amber)),

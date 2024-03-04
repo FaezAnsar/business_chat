@@ -6,6 +6,8 @@ class DatabaseIsNotOpen implements Exception {}
 
 class CouldNotDeleteEmployee implements Exception {}
 
+class CouldNotDeleteAnnouncement implements Exception {}
+
 class UserAlreadyExists implements Exception {}
 
 class CouldNotFindEmployee implements Exception {}

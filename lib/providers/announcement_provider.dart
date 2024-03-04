@@ -1,26 +1,39 @@
 import 'package:business_chat/announcement/announcement_class.dart';
+import 'package:business_chat/announcement/announcement_widget.dart';
+import 'package:business_chat/crud/database.dart';
 
 import 'package:flutter/material.dart';
 
 class AnnouncementProvider extends ChangeNotifier {
-  final List<Announcement> announcementList = [];
+  // List<AnnouncementDB> announcementList = [];
+  // final _businessService = BusinessService();
 
-  void addAnnouncement(Announcement announcement) {
-    announcementList.add(announcement);
-    notifyListeners();
-  }
+  // Future<void> getAllAnnouncements() async {
+  //   announcementList = (await _businessService.getAllAnnouncements()).toList();
+  //   print(announcementList);
+  // }
 
-  void deleteAnnouncement(Announcement announcement) {
-    announcementList.removeWhere((element) => element.id == announcement.id);
-    notifyListeners();
-  }
+  // void addAnnouncement(Map map) async {
+  //   final announcement = await _businessService.createAnnouncement(
+  //       to: map[toColumn],
+  //       from: map[fromColumn],
+  //       message: map[messageColumn],
+  //       organisation_id: _businessService.orgId);
+  //   announcementList.add(announcement);
+  //   notifyListeners();
+  // }
 
-  String? depart;
+  // void deleteAnnouncement(AnnouncementDB announcement) {
+  //   announcementList.removeWhere((element) => element.id == announcement.id);
+  //   notifyListeners();
+  // }
 
-  //  //String sender  --- applied after backend
+  // String? depart;
 
-  void departChange(String? value) {
-    depart = value;
-    notifyListeners();
-  }
+  // //  //String sender  --- applied after backend
+
+  // void departChange(String? value) {
+  //   depart = value;
+  //   notifyListeners();
+  // }
 }

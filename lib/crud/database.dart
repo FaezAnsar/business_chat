@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:business_chat/crud/database_exceptions.dart';
 import 'package:collection/collection.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,7 @@ class BusinessService {
   Database? _db;
 
   List<EmployeeDB> _employees = [];
+  //List<AnnouncementDB> _announcements = [];
   String? _orgId;
   OrganisationDB? _organisation;
 
@@ -21,17 +23,105 @@ class BusinessService {
   BusinessService._sharedInstance();
   factory BusinessService() => _shared;
 
+  Future<Iterable<AnnouncementDB>> getAllAnnouncements() async {
+    print("hola");
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+
+    final announcements = await db.query(announcementTable, orderBy: idColumn);
+    print("quieried");
+    return announcements
+        .map((announcement) => (announcement[organisationIdColumn] == _orgId)
+            ? AnnouncementDB.fromRow(announcement)
+            : null)
+        .whereNotNull();
+  }
+
+  Future<Iterable<AnnouncementDB>> getUsersAnnouncements() async {
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+
+    final announcements = await db.query(announcementTable, orderBy: idColumn);
+
+    return announcements
+        .map((announcement) => (announcement[organisationIdColumn] == orgId)
+            ? AnnouncementDB.fromRow(announcement)
+            : null)
+        .whereNotNull();
+  }
+
+  Future<void> deleteAnnouncement(int id) async {
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+    final deletedCount =
+        await db.delete(announcementTable, where: 'id=?', whereArgs: [id]);
+    if (deletedCount != 1) throw CouldNotDeleteAnnouncement();
+    // _announcements.removeWhere((announcement) => announcement.id == id);
+  }
+
+  Future<AnnouncementDB> createAnnouncement(
+      {required String to,
+      required String from,
+      required String message,
+      required String organisation_id}) async {
+    final Map<String, Object?> announcementMap = {
+      toColumn: to.toLowerCase(),
+      fromColumn: from.toLowerCase(),
+      messageColumn: message,
+      organisationIdColumn: organisation_id
+    };
+
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+    print("before");
+    final id = await db.insert(announcementTable, announcementMap);
+    print("announcemet created");
+    announcementMap.addEntries({idColumn: id}.entries);
+    final announcement = AnnouncementDB.fromRow(announcementMap);
+    // _announcements.add(announcement);
+    return announcement;
+  }
+
+  Future<Iterable<OrganisationDB>> getUsersOrganisation(User user) async {
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+    final userEmail = user.email;
+    final organisations = await db.query(organisationTable, orderBy: idColumn);
+    print(_orgId);
+    return organisations
+        .map((org) => (org[emailColumn] == userEmail)
+            ? OrganisationDB.fromRow(org)
+            : null)
+        .whereNotNull();
+
+    // return employees
+    //     .map((employee) => EmployeeDB.fromRow(employee))
+    //     .whereNotNull();
+  }
+
+  Future<Iterable<OrganisationDB>> getAllOrganisation() async {
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+
+    final organisations = await db.query(organisationTable, orderBy: idColumn);
+    print(_orgId);
+    return organisations.map((org) => OrganisationDB.fromRow(org));
+  }
+
   Future<Iterable<EmployeeDB>> getAllEmployees() async {
+    print("getting");
     await _ensureDbIsOpen();
     final db = _getDataBaseOrThrow();
 
     final employees = await db.query(employeeTable, orderBy: idColumn);
+    print("gottt");
     print(_orgId);
-    return employees
+    final ans = employees
         .map((employee) => (employee[organisationIdColumn] == _orgId)
             ? EmployeeDB.fromRow(employee)
             : null)
         .whereNotNull();
+    return ans;
 
     // return employees
     //     .map((employee) => EmployeeDB.fromRow(employee))
@@ -73,8 +163,8 @@ class BusinessService {
       required String email,
       required String organisationId}) async {
     final employeeMap = {
-      nameColumn: name,
-      roleColumn: role,
+      nameColumn: name.toLowerCase(),
+      roleColumn: role.toLowerCase(),
       employeeCnicColumn: employeeCnic,
       emailColumn: email,
       organisationIdColumn: organisationId
@@ -108,8 +198,8 @@ class BusinessService {
       required String email}) async {
     final organisationMap = {
       idColumn: id,
-      nameColumn: name,
-      ownerNameColumn: ownerName,
+      nameColumn: name.toLowerCase(),
+      ownerNameColumn: ownerName.toLowerCase(),
       ownerCnicColumn: ownerCnic,
       emailColumn: email
     };
@@ -159,8 +249,11 @@ class BusinessService {
       final db = await openDatabase(dbPath);
       _db = db;
 
+      // print(dbPath);
+
       await db.execute(createOrganisationTable);
       await db.execute(createEmployeeTable);
+      await db.execute(createAnnouncementTable);
       print("tables created ;)");
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
@@ -206,6 +299,28 @@ class EmployeeDB {
   int get hashCode => id.hashCode;
 }
 
+class AnnouncementDB {
+  final int id;
+  final String to;
+  final String from;
+  final String message;
+  final String organisation_id;
+
+  AnnouncementDB(
+      {required this.id,
+      required this.to,
+      required this.from,
+      required this.message,
+      required this.organisation_id});
+
+  AnnouncementDB.fromRow(Map<String, Object?> map)
+      : id = map[idColumn] as int,
+        to = map[toColumn] as String,
+        from = map[fromColumn] as String,
+        message = map[messageColumn] as String,
+        organisation_id = map[organisationIdColumn] as String;
+}
+
 class OrganisationDB {
   final String id;
   final String name;
@@ -248,6 +363,10 @@ const emailColumn = 'email';
 const roleColumn = 'role';
 const employeeCnicColumn = 'employee_cnic';
 const organisationIdColumn = 'organisation_id';
+const toColumn = 'to';
+const fromColumn = 'from';
+const messageColumn = 'message';
+const announcementTable = 'announcement';
 
 const createOrganisationTable = '''CREATE TABLE IF NOT EXISTS "organisation" (
 	"id"	TEXT NOT NULL UNIQUE,
@@ -271,3 +390,14 @@ const createEmployeeTable = '''CREATE TABLE IF NOT EXISTS "employee" (
 );
 );
 );  ''';
+
+const createAnnouncementTable = ''' CREATE TABLE IF NOT EXISTS"announcement" (
+	"id"	INTEGER NOT NULL UNIQUE,
+	"to"	TEXT NOT NULL,
+	"from"	TEXT NOT NULL,
+	"message"	TEXT,
+	"organisation_id"	TEXT NOT NULL,
+	FOREIGN KEY("organisation_id") REFERENCES "organisation"("id"),
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+ ''';

@@ -42,7 +42,7 @@ class _ContactPageState extends State<ContactPage> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            AnnouncementPopUp(context);
+            //AnnouncementPopUp(context);
           },
           child: Icon(Icons.add_alert_sharp),
         ),

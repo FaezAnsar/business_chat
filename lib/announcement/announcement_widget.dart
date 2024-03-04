@@ -1,11 +1,25 @@
 import 'package:business_chat/announcement/announcement_class.dart';
+import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/providers/announcement_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AnnouncementWidget extends StatelessWidget {
-  final Announcement announcement;
-  const AnnouncementWidget({super.key, required this.announcement});
+  final AnnouncementDB announcement;
+  AnnouncementWidget({super.key, required this.announcement});
+
+  final _businessService = BusinessService();
+  late final String _sender;
+
+  Future<String> getSender() async {
+    final userEmail = FirebaseAuth.instance.currentUser!.email;
+    final employees = (await _businessService.getAllEmployees()).toList();
+    final sender =
+        employees.firstWhere((employee) => employee.email == userEmail);
+    _sender = sender.name;
+    return _sender;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +37,9 @@ class AnnouncementWidget extends StatelessWidget {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                              context
-                                  .read<AnnouncementProvider>()
-                                  .deleteAnnouncement(announcement);
+                              // context
+                              //     .read<AnnouncementProvider>()
+                              //     .deleteAnnouncement(announcement);
                             },
                             child: Text("Yes"),
                           ),
@@ -40,39 +54,48 @@ class AnnouncementWidget extends StatelessWidget {
             onTap: () {
               showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                        scrollable: true,
-                        title: const Text("Announcement"),
-                        content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("To:${announcement.depart}"),
-                              const Text("From:(After backend integration)"),
-                              TextFormField(
-                                readOnly: true,
-                                controller: _controller,
-                                minLines: 10,
-                                maxLines: 10,
-                                keyboardType: TextInputType.multiline,
-                                decoration: const InputDecoration(
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.transparent)),
+                  builder: (context) => FutureBuilder(
+                      future: getSender(),
+                      builder: (context, s) {
+                        switch (s.connectionState) {
+                          case ConnectionState.done:
+                            return AlertDialog(
+                              scrollable: true,
+                              title: const Text("Announcement"),
+                              content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("To:${announcement.to}"),
+                                    Text("From:$_sender"),
+                                    TextFormField(
+                                      readOnly: true,
+                                      controller: _controller,
+                                      minLines: 10,
+                                      maxLines: 10,
+                                      keyboardType: TextInputType.multiline,
+                                      decoration: const InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.transparent),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.transparent)),
 
-                                  // border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ]),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("Ok"))
-                        ],
-                      ));
+                                        // border: OutlineInputBorder(),
+                                      ),
+                                    ),
+                                  ]),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Ok"))
+                              ],
+                            );
+                          default:
+                            return CircularProgressIndicator();
+                        }
+                      }));
             },
             title: Center(
                 child: Icon(
