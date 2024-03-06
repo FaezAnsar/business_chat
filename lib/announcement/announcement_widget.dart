@@ -5,11 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AnnouncementWidget extends StatelessWidget {
+class AnnouncementWidget extends StatefulWidget {
   final AnnouncementDB announcement;
   AnnouncementWidget({super.key, required this.announcement});
 
+  @override
+  State<AnnouncementWidget> createState() => _AnnouncementWidgetState();
+}
+
+class _AnnouncementWidgetState extends State<AnnouncementWidget> {
   final _businessService = BusinessService();
+
   late final String _sender;
 
   Future<String> getSender() async {
@@ -24,7 +30,7 @@ class AnnouncementWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController _controller = TextEditingController();
-    _controller.text = announcement.message;
+    _controller.text = widget.announcement.message;
     return Card(
         child: ListTile(
             onLongPress: () {
@@ -40,6 +46,9 @@ class AnnouncementWidget extends StatelessWidget {
                               // context
                               //     .read<AnnouncementProvider>()
                               //     .deleteAnnouncement(announcement);
+                              _businessService
+                                  .deleteAnnouncement(widget.announcement.id);
+                              setState(() {});
                             },
                             child: Text("Yes"),
                           ),
@@ -65,7 +74,7 @@ class AnnouncementWidget extends StatelessWidget {
                               content: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("To:${announcement.to}"),
+                                    Text("To:${widget.announcement.to}"),
                                     Text("From:$_sender"),
                                     TextFormField(
                                       readOnly: true,

@@ -203,8 +203,238 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           crossAxisCount: 2,
                           children: _announcements.map((announcement) {
                             print(_announcements.length);
-                            return AnnouncementWidget(
-                                announcement: announcement);
+                            return Card(
+                                child: ListTile(
+                                    onLongPress: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                title:
+                                                    Text("Delete Announcement"),
+                                                content: Text("U sure??"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      // context
+                                                      //     .read<AnnouncementProvider>()
+                                                      //     .deleteAnnouncement(announcement);
+                                                      _businessService
+                                                          .deleteAnnouncement(
+                                                              announcement.id);
+                                                      setState(() {});
+                                                    },
+                                                    child: Text("Yes"),
+                                                  ),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text("No")),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        String depart =
+                                                            'Electrical';
+                                                        TextEditingController
+                                                            messageController =
+                                                            TextEditingController();
+                                                        messageController.text =
+                                                            announcement
+                                                                .message;
+                                                        showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (context) =>
+                                                                    AlertDialog(
+                                                                      scrollable:
+                                                                          true,
+                                                                      title: const Text(
+                                                                          "Announcement"),
+                                                                      content:
+                                                                          Column(
+                                                                        children: [
+                                                                          Consumer<
+                                                                              AnnouncementProvider>(
+                                                                            builder: (context,
+                                                                                val,
+                                                                                child) {
+                                                                              return DropdownButton(
+                                                                                hint: Text("Choose Recipient"),
+                                                                                value: depart,
+                                                                                icon: const Icon(Icons.keyboard_arrow_down),
+                                                                                items: departments.map((String items) {
+                                                                                  return DropdownMenuItem(
+                                                                                    value: items,
+                                                                                    child: Text(items),
+                                                                                  );
+                                                                                }).toList(),
+                                                                                onChanged: (value) {
+                                                                                  //devTools.log(value ?? "xx");
+                                                                                  setState(() {
+                                                                                    depart = value!;
+                                                                                  });
+                                                                                },
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                          TextFormField(
+                                                                            controller:
+                                                                                messageController,
+                                                                            minLines:
+                                                                                10,
+                                                                            maxLines:
+                                                                                10,
+                                                                            keyboardType:
+                                                                                TextInputType.multiline,
+                                                                            decoration:
+                                                                                InputDecoration(
+                                                                              enabledBorder: UnderlineInputBorder(
+                                                                                borderSide: BorderSide(color: Colors.transparent),
+                                                                              ),
+                                                                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent)),
+                                                                              hintText: 'Type your text here...',
+                                                                              // border: OutlineInputBorder(),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        TextButton(
+                                                                          style:
+                                                                              TextButton.styleFrom(
+                                                                            textStyle:
+                                                                                Theme.of(context).textTheme.labelLarge,
+                                                                          ),
+                                                                          child:
+                                                                              const Text('Cancel'),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                        ),
+                                                                        TextButton(
+                                                                          style:
+                                                                              TextButton.styleFrom(
+                                                                            textStyle:
+                                                                                Theme.of(context).textTheme.labelLarge,
+                                                                          ),
+                                                                          child:
+                                                                              const Text('Update'),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            devTools.log("${depart.toString()}- - -");
+                                                                            if (depart == null &&
+                                                                                messageController.text.isEmpty) {
+                                                                              showErrorDialog(context, "Plz fill the empty fields");
+                                                                            } else if (depart == null) {
+                                                                              showErrorDialog(context, "Plz select a department");
+                                                                            } else if (messageController.text.isEmpty) {
+                                                                              showErrorDialog(context, "Plz enter a message");
+                                                                            } else {
+                                                                              Navigator.of(context).pop();
+
+                                                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                                content: Text("Sending message..."),
+                                                                                duration: Duration(milliseconds: 500),
+                                                                              ));
+
+                                                                              final updatedAnnouncement = await _businessService.updateAnnouncement(announcement: announcement, message: messageController.text, to: depart);
+                                                                              // await setAnnouncements();
+
+                                                                              setState(() {
+                                                                                _announcements.remove(announcement);
+                                                                                _announcements.add(updatedAnnouncement);
+                                                                              });
+
+                                                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                                content: Text("Announcement Sent!"),
+                                                                                duration: Duration(milliseconds: 700),
+                                                                              ));
+                                                                            }
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    ));
+                                                      },
+                                                      child: Text("Update"))
+                                                ],
+                                              ));
+                                    },
+                                    onTap: () {
+                                      TextEditingController _controller =
+                                          TextEditingController();
+                                      _controller.text = announcement.message;
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => FutureBuilder(
+                                              future: getSender(),
+                                              builder: (context, s) {
+                                                switch (s.connectionState) {
+                                                  case ConnectionState.done:
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      title: const Text(
+                                                          "Announcement"),
+                                                      content: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                "To:${announcement.to}"),
+                                                            Text(
+                                                                "From:$_sender"),
+                                                            TextFormField(
+                                                              readOnly: true,
+                                                              controller:
+                                                                  _controller,
+                                                              minLines: 10,
+                                                              maxLines: 10,
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .multiline,
+                                                              decoration:
+                                                                  const InputDecoration(
+                                                                enabledBorder:
+                                                                    UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.transparent),
+                                                                ),
+                                                                focusedBorder: UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Colors.transparent)),
+
+                                                                // border: OutlineInputBorder(),
+                                                              ),
+                                                            ),
+                                                          ]),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                                "Ok"))
+                                                      ],
+                                                    );
+                                                  default:
+                                                    return CircularProgressIndicator();
+                                                }
+                                              }));
+                                    },
+                                    title: Center(
+                                        child: Icon(
+                                      Icons.crisis_alert,
+                                      color: Colors.redAccent.shade700,
+                                    ))));
                           }).toList(),
                         );
                 case ConnectionState.none:

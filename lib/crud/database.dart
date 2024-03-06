@@ -50,12 +50,32 @@ class BusinessService {
         .whereNotNull();
   }
 
+  Future<AnnouncementDB> updateAnnouncement(
+      {required AnnouncementDB announcement,
+      required String message,
+      required String to}) async {
+    await _ensureDbIsOpen();
+    final db = _getDataBaseOrThrow();
+    final updatedCount = await db.update(
+        announcementTable, {messageColumn: message, toColumn: to},
+        where: 'id=?', whereArgs: [announcement.id]);
+    return AnnouncementDB(
+        id: announcement.id,
+        to: to,
+        from: announcement.from,
+        message: message,
+        organisation_id: announcement.organisation_id);
+  }
+
   Future<void> deleteAnnouncement(int id) async {
     await _ensureDbIsOpen();
     final db = _getDataBaseOrThrow();
     final deletedCount =
         await db.delete(announcementTable, where: 'id=?', whereArgs: [id]);
-    if (deletedCount != 1) throw CouldNotDeleteAnnouncement();
+    if (deletedCount != 1) {
+      print(deletedCount);
+      throw CouldNotDeleteAnnouncement();
+    }
     // _announcements.removeWhere((announcement) => announcement.id == id);
   }
 
@@ -151,8 +171,11 @@ class BusinessService {
     await _ensureDbIsOpen();
     final db = _getDataBaseOrThrow();
     final deletedCount =
-        await db.delete(employeeTable, where: 'id=?', whereArgs: [id]);
-    if (deletedCount != 1) throw CouldNotDeleteEmployee();
+        await db.delete(employeeTable, where: 'id = ?', whereArgs: [id]);
+    if (deletedCount != 1) {
+      print(deletedCount);
+      throw CouldNotDeleteEmployee();
+    }
     _employees.removeWhere((employee) => employee.id == id);
   }
 
@@ -249,7 +272,7 @@ class BusinessService {
       final db = await openDatabase(dbPath);
       _db = db;
 
-      // print(dbPath);
+      print(dbPath);
 
       await db.execute(createOrganisationTable);
       await db.execute(createEmployeeTable);

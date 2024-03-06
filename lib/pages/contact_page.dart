@@ -64,8 +64,68 @@ class _ContactPageState extends State<ContactPage> {
                               shrinkWrap: true,
                               itemCount: _employees.length,
                               itemBuilder: (context, index) {
-                                return ContactWidget(
-                                    employee: _employees[index]);
+                                return InkWell(
+                                  onTap: () async {
+                                    // context.read<ContactProvider>().press(employee.id);
+                                    await Navigator.pushNamed(
+                                        context, chatPageRoute);
+                                  },
+                                  onLongPress: () async {
+                                    await _businessService
+                                        .deleteEmployee(_employees[index].id);
+
+                                    setState(() {
+                                      _employees.remove(_employees[index]);
+                                    });
+                                  },
+                                  child: Container(
+                                    //this is done to change container color to grey when clicked
+                                    // color: employee.pressed ? Colors.grey : Colors.white,
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 30,
+                                                child: Text(
+                                                  _employees[index].name[0],
+                                                  style:
+                                                      TextStyle(fontSize: 30),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    _employees[index].name,
+                                                    style: TextStyle(
+                                                        fontSize: 25,
+                                                        color: Colors.blue),
+                                                  ),
+                                                  Text(_employees[index].role,
+                                                      style: TextStyle(
+                                                          fontSize: 15)),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          thickness: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
                               },
                             );
                           },
@@ -95,9 +155,18 @@ class _ContactPageState extends State<ContactPage> {
 //   }
 // }
 
-class ContactWidget extends StatelessWidget {
+class ContactWidget extends StatefulWidget {
   final EmployeeDB employee;
-  const ContactWidget({super.key, required this.employee});
+  final List<EmployeeDB> employees;
+  const ContactWidget(
+      {super.key, required this.employee, required this.employees});
+
+  @override
+  State<ContactWidget> createState() => _ContactWidgetState();
+}
+
+class _ContactWidgetState extends State<ContactWidget> {
+  final _businessService = BusinessService();
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +174,14 @@ class ContactWidget extends StatelessWidget {
     return InkWell(
       onTap: () async {
         // context.read<ContactProvider>().press(employee.id);
-        // await Navigator.pushNamed(context, chatPageRoute)
-        //     .then((_) => context.read<ContactProvider>().press(employee.id));
+        await Navigator.pushNamed(context, chatPageRoute);
+      },
+      onLongPress: () async {
+        await _businessService.deleteEmployee(widget.employee.id);
+
+        setState(() {
+          widget.employees.remove(widget.employee);
+        });
       },
       child: Container(
         //this is done to change container color to grey when clicked
@@ -122,7 +197,7 @@ class ContactWidget extends StatelessWidget {
                   CircleAvatar(
                     radius: 30,
                     child: Text(
-                      employee.name[0],
+                      widget.employee.name[0],
                       style: TextStyle(fontSize: 30),
                     ),
                   ),
@@ -133,10 +208,11 @@ class ContactWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        employee.name,
+                        widget.employee.name,
                         style: TextStyle(fontSize: 25, color: Colors.blue),
                       ),
-                      Text(employee.role, style: TextStyle(fontSize: 15)),
+                      Text(widget.employee.role,
+                          style: TextStyle(fontSize: 15)),
                     ],
                   )
                 ],
