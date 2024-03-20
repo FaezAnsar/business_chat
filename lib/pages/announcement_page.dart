@@ -1,32 +1,45 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer' as devTools show log;
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:business_chat/announcement/announcement_pop_up.dart';
 import 'package:business_chat/announcement/announcement_widget.dart';
+import 'package:business_chat/crud/cloud_class.dart';
+import 'package:business_chat/crud/cloud_storage.dart';
 import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/departments.dart';
 import 'package:business_chat/error_dialogs/general_error_dialog.dart';
 import 'package:business_chat/providers/announcement_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-
-import 'dart:developer' as devTools show log;
-
-import 'package:provider/provider.dart';
 
 class AnnouncementPage extends StatefulWidget {
-  const AnnouncementPage({super.key});
+  String orgId;
+  String employeeId;
+  AnnouncementPage({
+    Key? key,
+    required this.orgId,
+    required this.employeeId,
+  }) : super(key: key);
 
   @override
   State<AnnouncementPage> createState() => _AnnouncementPageState();
 }
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
-  late final BusinessService _businessService;
+  late final FirebaseCloudStorage _businessService;
   //final _announcements = [];
   late final String _sender;
-  List<AnnouncementDB> _announcements = [];
+
+  Iterable<CloudAnnouncement> _announcements = [];
 
   Future<void> setAnnouncements() async {
-    print('${_businessService.orgId},sett');
-    final temp = (await _businessService.getAllAnnouncements()).toList();
+    // print('${_businessService.orgId},sett');
+    final temp = (await _businessService.getAllAnnouncements(
+            organisationId: widget.orgId))
+        //.toList()
+        ;
 
     //_announcements = List<AnnouncementDB>.from(temp);
     // setState(() {
@@ -39,14 +52,29 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   @override
   void initState() {
     print("init state");
-    _businessService = BusinessService();
+
     //setAnnouncements();
     super.initState();
+    _businessService = FirebaseCloudStorage();
+
+    //createOrJoin(context);
+    // Future.delayed(Duration.zero, () {
+    //   final modalRoute = ModalRoute.of(context);
+    //   if (modalRoute != null) {
+    //     print("hi");
+    //     final args = modalRoute.settings.arguments;
+    //     if (args != null && args is Map) {
+    //       wiorgId = args[organisationIdField];
+    //     }
+    //   }
+    // });
   }
 
   Future<String> getSender() async {
     final userEmail = FirebaseAuth.instance.currentUser!.email;
-    final employees = (await _businessService.getAllEmployees()).toList();
+    final employees =
+        (await _businessService.getAllEmployees(organisationId: widget.orgId))
+            .toList();
     final sender =
         employees.firstWhere((employee) => employee.email == userEmail);
     _sender = sender.name;
@@ -54,7 +82,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contexts) {
     devTools.log("Announcement rebuilt");
     //devTools.log("${provider.depart.toString()}###");
 
@@ -70,7 +98,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
               //     Provider.of<AnnouncementProvider>(context, listen: false);
               // devTools.log("${announcementSentProvider.depart.toString()}+++");
               showDialog(
-                  context: context,
+                  context: contexts,
                   builder: (context) => FutureBuilder(
                       future: getSender(),
                       builder: (context, s) {
@@ -79,25 +107,21 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           title: const Text("Announcement"),
                           content: Column(
                             children: [
-                              Consumer<AnnouncementProvider>(
-                                builder: (context, val, child) {
-                                  return DropdownButton(
-                                    hint: Text("Choose Recipient"),
-                                    value: depart,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: departments.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(items),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      //devTools.log(value ?? "xx");
-                                      setState(() {
-                                        depart = value!;
-                                      });
-                                    },
+                              DropdownButton(
+                                hint: Text("Choose Recipient"),
+                                value: depart,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                items: departments.map((String items) {
+                                  return DropdownMenuItem(
+                                    value: items,
+                                    child: Text(items),
                                   );
+                                }).toList(),
+                                onChanged: (value) {
+                                  //devTools.log(value ?? "xx");
+                                  setState(() {
+                                    depart = value!;
+                                  });
                                 },
                               ),
                               TextFormField(
@@ -149,25 +173,23 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                   showErrorDialog(
                                       context, "Plz enter a message");
                                 } else {
-                                  Navigator.of(context).pop();
-
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
                                     content: Text("Sending message..."),
                                     duration: Duration(milliseconds: 500),
                                   ));
-
+                                  //  Navigator.of(context).pop();
                                   final announcement =
                                       await _businessService.createAnnouncement(
+                                          employeeId: widget.employeeId,
                                           to: depart,
                                           from: _sender,
                                           message: messageController.text,
-                                          organisation_id:
-                                              _businessService.orgId);
+                                          organisationId: widget.orgId);
                                   // await setAnnouncements();
 
                                   setState(() {
-                                    _announcements.add(announcement);
+                                    // _announcements.add(announcement);
                                   });
 
                                   ScaffoldMessenger.of(context)
@@ -222,7 +244,8 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                                       //     .deleteAnnouncement(announcement);
                                                       _businessService
                                                           .deleteAnnouncement(
-                                                              announcement.id);
+                                                              announcement:
+                                                                  announcement);
                                                       setState(() {});
                                                     },
                                                     child: Text("Yes"),
@@ -335,19 +358,20 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                                                             } else if (messageController.text.isEmpty) {
                                                                               showErrorDialog(context, "Plz enter a message");
                                                                             } else {
-                                                                              Navigator.of(context).pop();
+                                                                              //Navigator.of(context).pop();
 
                                                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                                                                 content: Text("Sending message..."),
                                                                                 duration: Duration(milliseconds: 500),
                                                                               ));
 
-                                                                              final updatedAnnouncement = await _businessService.updateAnnouncement(announcement: announcement, message: messageController.text, to: depart);
+                                                                              await _businessService.updateAnnouncement(announcement: announcement, message: messageController.text, to: depart);
                                                                               // await setAnnouncements();
 
                                                                               setState(() {
-                                                                                _announcements.remove(announcement);
-                                                                                _announcements.add(updatedAnnouncement);
+                                                                                print("HNI2");
+                                                                                // _announcements.remove(announcement);
+                                                                                // _announcements.add(updatedAnnouncement);
                                                                               });
 
                                                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(

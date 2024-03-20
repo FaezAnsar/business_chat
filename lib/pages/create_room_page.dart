@@ -1,3 +1,4 @@
+import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/pop_ups/room_creation_pop_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,10 +51,10 @@ class CreateRoomPage extends StatelessWidget {
 
                   final Map<String, String> map = {
                     'type': 'create',
-                    emailColumn: email,
-                    nameColumn: _orgName.text,
-                    ownerNameColumn: _ownerName.text,
-                    ownerCnicColumn: _ownerCnic.text
+                    emailField: email,
+                    nameField: _orgName.text,
+                    ownerNameField: _ownerName.text,
+                    ownerCnicField: _ownerCnic.text
                   };
                   RoomCreationPopUp(context, map);
                 },

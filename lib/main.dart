@@ -39,8 +39,13 @@ void main() {
           homePageRoute: (context) => HomePage(),
           chatPageRoute: (context) => const ChatPage(),
           searchPageRoute: (context) => const SearchPage(),
-          contactPageRoute: (context) => const ContactPage(),
-          announcementPageRoute: (context) => const AnnouncementPage(),
+          contactPageRoute: (context) => ContactPage(
+                orgId: "",
+              ),
+          announcementPageRoute: (context) => AnnouncementPage(
+                orgId: '',
+                employeeId: '',
+              ),
           landingPageRoute: (context) => LandingPage(),
           joinRoomRoute: (context) => JoinRoomPage(),
           createRoomRoute: (context) => CreateRoomPage(),

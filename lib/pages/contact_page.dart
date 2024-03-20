@@ -2,6 +2,8 @@
 
 import 'package:business_chat/announcement/announcement_pop_up.dart';
 import 'package:business_chat/constants/routes.dart';
+import 'package:business_chat/crud/cloud_class.dart';
+import 'package:business_chat/crud/cloud_storage.dart';
 import 'package:business_chat/crud/database.dart';
 
 import 'package:business_chat/providers/contact_provider.dart';
@@ -11,26 +13,44 @@ import 'package:uuid/uuid.dart';
 import 'dart:developer' as devTools show log;
 
 class ContactPage extends StatefulWidget {
-  const ContactPage({super.key});
+  String orgId;
+  ContactPage({
+    super.key,
+    required this.orgId,
+  });
 
   @override
   State<ContactPage> createState() => _ContactPageState();
 }
 
 class _ContactPageState extends State<ContactPage> {
-  late final BusinessService _businessService;
-  List<EmployeeDB> _employees = [];
+  late final FirebaseCloudStorage _businessService;
+  List<CloudEmployee> _employees = [];
+  //late final String orgId;
 
   @override
   void initState() {
-    _businessService = BusinessService();
-    //setEmployees();
     super.initState();
+    _businessService = FirebaseCloudStorage();
+
+    // Future.delayed(Duration.zero, () {
+    //   final modalRoute = ModalRoute.of(context);
+    //   if (modalRoute != null) {
+    //     print("hi");
+    //     final args = modalRoute.settings.arguments;
+    //     if (args != null && args is Map) {
+    //       print("object");
+    //       orgId = args[organisationIdField];
+    //     }
+    //   }
+    // });
   }
 
   Future<void> setEmployees() async {
-    print(_businessService.orgId);
-    final temp = (await _businessService.getAllEmployees()).toList();
+    // print(_businessService.orgId);
+    final temp =
+        (await _businessService.getAllEmployees(organisationId: widget.orgId))
+            .toList();
 
     _employees = temp;
     print("employees set");
@@ -71,11 +91,12 @@ class _ContactPageState extends State<ContactPage> {
                                         context, chatPageRoute);
                                   },
                                   onLongPress: () async {
-                                    await _businessService
-                                        .deleteEmployee(_employees[index].id);
+                                    await _businessService.deleteEmployee(
+                                        orgId: widget.orgId,
+                                        employee: _employees[index]);
 
                                     setState(() {
-                                      _employees.remove(_employees[index]);
+                                      // _employees.remove(_employees[index]);
                                     });
                                   },
                                   child: Container(
@@ -156,8 +177,8 @@ class _ContactPageState extends State<ContactPage> {
 // }
 
 class ContactWidget extends StatefulWidget {
-  final EmployeeDB employee;
-  final List<EmployeeDB> employees;
+  final CloudEmployee employee;
+  final List<CloudEmployee> employees;
   const ContactWidget(
       {super.key, required this.employee, required this.employees});
 
@@ -166,7 +187,7 @@ class ContactWidget extends StatefulWidget {
 }
 
 class _ContactWidgetState extends State<ContactWidget> {
-  final _businessService = BusinessService();
+  final _businessService = FirebaseCloudStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +198,8 @@ class _ContactWidgetState extends State<ContactWidget> {
         await Navigator.pushNamed(context, chatPageRoute);
       },
       onLongPress: () async {
-        await _businessService.deleteEmployee(widget.employee.id);
+        await _businessService.deleteEmployee(
+            orgId: widget.employee.id, employee: widget.employee);
 
         setState(() {
           widget.employees.remove(widget.employee);

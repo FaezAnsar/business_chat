@@ -1,13 +1,29 @@
 import 'package:business_chat/constants/routes.dart';
+import 'package:business_chat/crud/cloud_class.dart';
+import 'package:business_chat/crud/cloud_storage.dart';
 import 'package:business_chat/crud/database.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-Future<void> RoomCreationPopUp(BuildContext context, Map map) {
-  final key = Uuid().v4();
-  map.addEntries({idColumn: key}.entries);
+Future<void> RoomCreationPopUp(BuildContext context, Map map) async {
+  //final key = Uuid().v4();
 
+  final _businessService = FirebaseCloudStorage();
+  final org = await (_businessService.createOrganisation(
+    name: map[nameField],
+    owner_name: map[ownerNameField],
+    owner_cnic: int.parse(map[ownerCnicField]),
+    email: map[emailField],
+  ));
+  map.addEntries({organisationIdField: org.id}.entries);
+  final employee = await (_businessService.createEmployee(
+      name: map[ownerNameField],
+      role: 'owner',
+      employeeCnic: int.parse(map[ownerCnicField]),
+      email: map[emailField],
+      organisationId: org.id));
+  map.addEntries({employeeIdField: employee.id}.entries);
   return showDialog(
     context: context,
     builder: (context) {
@@ -19,11 +35,11 @@ Future<void> RoomCreationPopUp(BuildContext context, Map map) {
               //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: Text(key),
+                  child: Text(org.id),
                 ),
                 TextButton(
                   onPressed: () async {
-                    FlutterClipboard.copy(key).then(
+                    FlutterClipboard.copy(org.id).then(
                       (value) async {
                         return ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

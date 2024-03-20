@@ -1,4 +1,6 @@
 import 'package:business_chat/announcement/announcement_class.dart';
+import 'package:business_chat/crud/cloud_class.dart';
+import 'package:business_chat/crud/cloud_storage.dart';
 import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/providers/announcement_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AnnouncementWidget extends StatefulWidget {
-  final AnnouncementDB announcement;
+  final CloudAnnouncement announcement;
   AnnouncementWidget({super.key, required this.announcement});
 
   @override
@@ -14,13 +16,15 @@ class AnnouncementWidget extends StatefulWidget {
 }
 
 class _AnnouncementWidgetState extends State<AnnouncementWidget> {
-  final _businessService = BusinessService();
+  final _businessService = FirebaseCloudStorage();
 
   late final String _sender;
 
   Future<String> getSender() async {
     final userEmail = FirebaseAuth.instance.currentUser!.email;
-    final employees = (await _businessService.getAllEmployees()).toList();
+    final employees = (await _businessService.getAllEmployees(
+            organisationId: widget.announcement.organisationId))
+        .toList();
     final sender =
         employees.firstWhere((employee) => employee.email == userEmail);
     _sender = sender.name;
@@ -46,8 +50,8 @@ class _AnnouncementWidgetState extends State<AnnouncementWidget> {
                               // context
                               //     .read<AnnouncementProvider>()
                               //     .deleteAnnouncement(announcement);
-                              _businessService
-                                  .deleteAnnouncement(widget.announcement.id);
+                              _businessService.deleteAnnouncement(
+                                  announcement: widget.announcement);
                               setState(() {});
                             },
                             child: Text("Yes"),
