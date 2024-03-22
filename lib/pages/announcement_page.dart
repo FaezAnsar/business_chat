@@ -280,28 +280,26 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                                                       content:
                                                                           Column(
                                                                         children: [
-                                                                          Consumer<
-                                                                              AnnouncementProvider>(
-                                                                            builder: (context,
-                                                                                val,
-                                                                                child) {
-                                                                              return DropdownButton(
-                                                                                hint: Text("Choose Recipient"),
-                                                                                value: depart,
-                                                                                icon: const Icon(Icons.keyboard_arrow_down),
-                                                                                items: departments.map((String items) {
-                                                                                  return DropdownMenuItem(
-                                                                                    value: items,
-                                                                                    child: Text(items),
-                                                                                  );
-                                                                                }).toList(),
-                                                                                onChanged: (value) {
-                                                                                  //devTools.log(value ?? "xx");
-                                                                                  setState(() {
-                                                                                    depart = value!;
-                                                                                  });
-                                                                                },
+                                                                          DropdownButton(
+                                                                            hint:
+                                                                                Text("Choose Recipient"),
+                                                                            value:
+                                                                                depart,
+                                                                            icon:
+                                                                                const Icon(Icons.keyboard_arrow_down),
+                                                                            items:
+                                                                                departments.map((String items) {
+                                                                              return DropdownMenuItem(
+                                                                                value: items,
+                                                                                child: Text(items),
                                                                               );
+                                                                            }).toList(),
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              //devTools.log(value ?? "xx");
+                                                                              setState(() {
+                                                                                depart = value!;
+                                                                              });
                                                                             },
                                                                           ),
                                                                           TextFormField(

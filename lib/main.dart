@@ -14,26 +14,19 @@ import 'package:business_chat/pages/registration_page.dart';
 import 'package:business_chat/pages/search_page.dart';
 import 'package:business_chat/pages/starting_page.dart';
 import 'package:business_chat/pages/verify_email_page.dart';
-import 'package:business_chat/providers/announcement_provider.dart';
-import 'package:business_chat/providers/contact_provider.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:business_chat/providers/bloc/auth_bloc.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 // import 'dart:developer' as devTools show log;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized;
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => ContactProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AnnouncementProvider(),
-        )
-      ],
+    BlocProvider(
+      create: (context) => AuthBloc(),
       child: MaterialApp(
         routes: {
           homePageRoute: (context) => HomePage(),

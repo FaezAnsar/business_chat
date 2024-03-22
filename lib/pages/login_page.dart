@@ -2,9 +2,12 @@ import 'package:business_chat/constants/routes.dart';
 import 'package:business_chat/firebase_options.dart';
 import 'package:business_chat/main.dart';
 import 'package:business_chat/pages/verify_email_page.dart';
+import 'package:business_chat/providers/bloc/auth_bloc.dart';
+import 'package:business_chat/providers/bloc/auth_event.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -35,15 +38,9 @@ class LoginPage extends StatelessWidget {
                   print(email);
                   print(password);
                   try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: email, password: password);
-                    final user = await FirebaseAuth.instance.currentUser;
-                    if (user?.emailVerified ?? false)
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          landingPageRoute, (route) => false);
-                    else
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          verfifyPageRoute, (route) => false);
+                    context
+                        .read<AuthBloc>()
+                        .add(AuthEventLogIn(email: email, password: password));
                   } catch (e) {
                     print(e);
                   }

@@ -54,23 +54,21 @@ class SearchPage extends StatelessWidget {
         ],
       ),
       body: Column(children: [
-        Consumer<ContactProvider>(builder: (context, value, child) {
-          return Expanded(
-              child:
-                  //(lettersTyped >= 1)
-                  //     ? ListView.builder(
-                  //         //counting how many matches are there between letters typed and names in database
-                  //         itemCount: searchList.length,
-                  //         itemBuilder: (context, index) {
-                  //           String key = searchList[index];
-                  //           return ContactWidget(
-                  //               employee:
-                  //                   Employees(name: key, role: m[key] ?? "N/A"));
-                  //         },
-                  //       )
-                  //     :
-                  Container());
-        })
+        Expanded(
+            child:
+                //(lettersTyped >= 1)
+                //     ? ListView.builder(
+                //         //counting how many matches are there between letters typed and names in database
+                //         itemCount: searchList.length,
+                //         itemBuilder: (context, index) {
+                //           String key = searchList[index];
+                //           return ContactWidget(
+                //               employee:
+                //                   Employees(name: key, role: m[key] ?? "N/A"));
+                //         },
+                //       )
+                //     :
+                Container())
       ]),
     );
   }

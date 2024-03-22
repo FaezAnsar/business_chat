@@ -76,78 +76,72 @@ class _ContactPageState extends State<ContactPage> {
                     reverse: true,
                     child: Column(
                       children: [
-                        Consumer<ContactProvider>(
-                          builder: (context, value, child) {
-                            //print(value);
-                            return ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: _employees.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () async {
-                                    // context.read<ContactProvider>().press(employee.id);
-                                    await Navigator.pushNamed(
-                                        context, chatPageRoute);
-                                  },
-                                  onLongPress: () async {
-                                    await _businessService.deleteEmployee(
-                                        orgId: widget.orgId,
-                                        employee: _employees[index]);
-
-                                    setState(() {
-                                      // _employees.remove(_employees[index]);
-                                    });
-                                  },
-                                  child: Container(
-                                    //this is done to change container color to grey when clicked
-                                    // color: employee.pressed ? Colors.grey : Colors.white,
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 30,
-                                                child: Text(
-                                                  _employees[index].name[0],
-                                                  style:
-                                                      TextStyle(fontSize: 30),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    _employees[index].name,
-                                                    style: TextStyle(
-                                                        fontSize: 25,
-                                                        color: Colors.blue),
-                                                  ),
-                                                  Text(_employees[index].role,
-                                                      style: TextStyle(
-                                                          fontSize: 15)),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 2,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                );
+                        ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: _employees.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () async {
+                                // context.read<ContactProvider>().press(employee.id);
+                                await Navigator.pushNamed(
+                                    context, chatPageRoute);
                               },
+                              onLongPress: () async {
+                                await _businessService.deleteEmployee(
+                                    orgId: widget.orgId,
+                                    employee: _employees[index]);
+
+                                setState(() {
+                                  // _employees.remove(_employees[index]);
+                                });
+                              },
+                              child: Container(
+                                //this is done to change container color to grey when clicked
+                                // color: employee.pressed ? Colors.grey : Colors.white,
+                                color: Colors.white,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 30,
+                                            child: Text(
+                                              _employees[index].name[0],
+                                              style: TextStyle(fontSize: 30),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                _employees[index].name,
+                                                style: TextStyle(
+                                                    fontSize: 25,
+                                                    color: Colors.blue),
+                                              ),
+                                              Text(_employees[index].role,
+                                                  style:
+                                                      TextStyle(fontSize: 15)),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Divider(
+                                      thickness: 2,
+                                    )
+                                  ],
+                                ),
+                              ),
                             );
                           },
                         )

@@ -64,6 +64,7 @@ Future<bool> isalreadyJoined(User user, Map map) async {
         //     (e.employee_cnic == map[employeeCnicColumn] &&
         //         e.organisation_id == map[organisationIdColumn])
         ) {
+      map.addEntries({employeeIdField: e.id}.entries);
       return true;
     }
   }

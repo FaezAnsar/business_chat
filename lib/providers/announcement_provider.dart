@@ -4,7 +4,7 @@ import 'package:business_chat/crud/database.dart';
 
 import 'package:flutter/material.dart';
 
-class AnnouncementProvider extends ChangeNotifier {
+//class AnnouncementProvider extends ChangeNotifier {
   // List<AnnouncementDB> announcementList = [];
   // final _businessService = BusinessService();
 
@@ -36,4 +36,4 @@ class AnnouncementProvider extends ChangeNotifier {
   //   depart = value;
   //   notifyListeners();
   // }
-}
+//}
