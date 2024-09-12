@@ -52,8 +52,8 @@ Admins can create announcements to notify specific departments. This ensures imp
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/business_chat_app.git
-   cd business_chat_app
+   git clone https://github.com/FaezAnsar/business_chat.git
+   cd business_chat
 2. Get dependencies:
    ```bash
    flutter pub get
