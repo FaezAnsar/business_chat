@@ -1,16 +1,64 @@
-# business_chat
+# Business Chat App
 
-A new Flutter project.
+**Business Chat** is a real-time messaging application designed for organizations to manage employee communication efficiently. With features such as login/signup, creating rooms, joining rooms using a code, real-time messaging, and announcement notifications, this app provides a seamless communication experience for employees.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Login/Signup**: Secure login and registration for employees.
+- **Room Creation**: Create rooms for departments or teams within the organization.
+- **Join Room**: Employees can join their organization’s rooms using a unique code.
+- **Real-time Messaging**: Chat interface similar to WhatsApp with live updates.
+- **Announcements**: Notify selected departments with important announcements.
+- **Logout**: Securely logout of the app.
 
-A few resources to get you started if this is your first Flutter project:
+## Pages Overview
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 1. Login/Signup Page
+This page allows users to register a new account or log in to an existing one using their credentials.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Login/Signup](<placeholder-for-login-signup-image>)
+
+### 2. Join Room Page
+Employees can enter the organization's unique room code to join their respective teams.
+
+![Join Room](<placeholder-for-join-room-image>)
+
+### 3. Chat Page
+A clean and intuitive WhatsApp-like chat interface for employees to communicate in real-time within their organization.
+
+![Chat Page](<placeholder-for-chat-page-image>)
+
+### 4. Announcement Page
+Admins can create announcements to notify specific departments. This ensures important updates reach the right people quickly.
+
+![Announcement Page](<placeholder-for-announcement-page-image>)
+
+## Key Functionalities
+
+- **Real-time Messaging**: Powered by Firebase, allowing instant delivery of messages across users.
+- **Create/Join Rooms**: Flexibility to organize employees into different chat rooms based on departments or projects.
+- **Departmental Announcements**: Send targeted announcements to specific departments to ensure effective communication.
+- **Organization Code**: Employees join the organization using a unique code, maintaining a structured environment.
+- **Logout**: Simple and secure logout process to maintain user privacy.
+
+## Technologies Used
+
+- **Flutter**: For building the UI and handling navigation.
+- **Firebase**: Real-time database and authentication for secure and fast messaging.
+- **Bloc**: For state management and ensuring smooth app functionality.
+- **Dart**: The primary language for development.
+
+## How to Run
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/business_chat_app.git
+   cd business_chat_app
+2. Get dependencies:
+   ```bash
+   flutter pub get
+3. Run on simulator/device:
+   ```bash
+   flutter run
+
+
