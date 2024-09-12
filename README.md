@@ -1,6 +1,6 @@
 # Business Chat App
 
-**Business Chat** is a real-time messaging application designed for organizations to manage employee communication efficiently. With features such as login/signup, creating rooms, joining rooms using a code, real-time messaging, and announcement notifications, this app provides a seamless communication experience for employees.
+**Business Chat** is a real-time messaging application designed for organizations to manage employee communication efficiently. With features such as login/signup, creating rooms, joining rooms using a code, real-time messaging, and announcement notifications, this app provides a  communication platform for employees.
 
 ## Features
 
