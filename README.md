@@ -16,22 +16,17 @@
 ### 1. Login/Signup Page
 This page allows users to register a new account or log in to an existing one using their credentials.
 
-![Login/Signup](<placeholder-for-login-signup-image>)
 
 ### 2. Join Room Page
 Employees can enter the organization's unique room code to join their respective teams.
 
-![Join Room](<placeholder-for-join-room-image>)
 
 ### 3. Chat Page
 A clean and intuitive WhatsApp-like chat interface for employees to communicate in real-time within their organization.
 
-![Chat Page](<placeholder-for-chat-page-image>)
 
 ### 4. Announcement Page
 Admins can create announcements to notify specific departments. This ensures important updates reach the right people quickly.
-
-![Announcement Page](<placeholder-for-announcement-page-image>)
 
 ## Key Functionalities
 
