@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:business_chat/constants/routes.dart';
-import 'package:business_chat/firebase_options.dart';
 import 'package:business_chat/pages/announcement_page.dart';
 import 'package:business_chat/pages/chat_page.dart';
 import 'package:business_chat/pages/contact_page.dart';
@@ -14,9 +13,9 @@ import 'package:business_chat/pages/registration_page.dart';
 import 'package:business_chat/pages/search_page.dart';
 import 'package:business_chat/pages/starting_page.dart';
 import 'package:business_chat/pages/verify_email_page.dart';
-
-import 'package:business_chat/providers/bloc/auth_bloc.dart';
-
+import 'package:business_chat/providers/bloc/auth/auth_bloc.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,10 +23,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized;
-  runApp(
-    BlocProvider(
+  runApp(DevicePreview(
+    enabled: !kReleaseMode,
+    builder: (context) => BlocProvider(
       create: (context) => AuthBloc(),
       child: MaterialApp(
+        locale: DevicePreview.locale(context),
+        builder: DevicePreview.appBuilder,
         routes: {
           homePageRoute: (context) => HomePage(),
           chatPageRoute: (context) => const ChatPage(),
@@ -50,5 +52,5 @@ void main() {
         home: StartingPage(),
       ),
     ),
-  );
+  ));
 }

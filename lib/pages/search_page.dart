@@ -1,9 +1,5 @@
-import 'package:business_chat/main.dart';
-import 'package:business_chat/pages/contact_page.dart';
 import 'package:business_chat/pages/home_page.dart';
-import 'package:business_chat/providers/contact_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});

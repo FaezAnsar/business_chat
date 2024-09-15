@@ -1,16 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'package:business_chat/announcement/announcement_pop_up.dart';
-import 'package:business_chat/constants/routes.dart';
+import 'dart:developer' as devTools show log;
+
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/cloud_storage.dart';
-import 'package:business_chat/crud/database.dart';
-
-import 'package:business_chat/providers/contact_provider.dart';
+import 'package:business_chat/pages/chat_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:developer' as devTools show log;
 
 class ContactPage extends StatefulWidget {
   String orgId;
@@ -77,74 +73,99 @@ class _ContactPageState extends State<ContactPage> {
                     child: Column(
                       children: [
                         ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: _employees.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () async {
-                                // context.read<ContactProvider>().press(employee.id);
-                                await Navigator.pushNamed(
-                                    context, chatPageRoute);
-                              },
-                              onLongPress: () async {
-                                await _businessService.deleteEmployee(
-                                    orgId: widget.orgId,
-                                    employee: _employees[index]);
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: _employees.length,
+                            itemBuilder: (context, index) {
+                              print("building");
+                              // if (_employees[index].email !=
+                              //     FirebaseAuth.instance.currentUser!.email) {
+                              return InkWell(
+                                onTap: () async {
+                                  final userEmail =
+                                      FirebaseAuth.instance.currentUser!.email;
+                                  final employees =
+                                      (await _businessService.getAllEmployees(
+                                              organisationId: widget.orgId))
+                                          .toList();
+                                  final sender = employees.firstWhere(
+                                      (employee) =>
+                                          employee.email == userEmail);
+                                  // context.read<ContactProvider>().press(employee.id);
+                                  // await Navigator.pushNamed(
+                                  //     context, chatPageRoute,
+                                  //     arguments: {
+                                  //       'employee': _employees[index],
+                                  //     });
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ChatPage(
+                                                sender: sender,
+                                                receiver: _employees[index],
+                                              )));
+                                },
+                                onLongPress: () async {
+                                  await _businessService.deleteEmployee(
+                                      orgId: widget.orgId,
+                                      employee: _employees[index]);
 
-                                setState(() {
-                                  // _employees.remove(_employees[index]);
-                                });
-                              },
-                              child: Container(
-                                //this is done to change container color to grey when clicked
-                                // color: employee.pressed ? Colors.grey : Colors.white,
-                                color: Colors.white,
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 30,
-                                            child: Text(
-                                              _employees[index].name[0],
-                                              style: TextStyle(fontSize: 30),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                _employees[index].name,
-                                                style: TextStyle(
-                                                    fontSize: 25,
-                                                    color: Colors.blue),
+                                  setState(() {
+                                    // _employees.remove(_employees[index]);
+                                  });
+                                },
+                                child: Container(
+                                  //this is done to change container color to grey when clicked
+                                  // color: employee.pressed ? Colors.grey : Colors.white,
+                                  color: Colors.white,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 30,
+                                              child: Text(
+                                                _employees[index].name[0],
+                                                style: TextStyle(fontSize: 30),
                                               ),
-                                              Text(_employees[index].role,
-                                                  style:
-                                                      TextStyle(fontSize: 15)),
-                                            ],
-                                          )
-                                        ],
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _employees[index].name,
+                                                  style: TextStyle(
+                                                      fontSize: 25,
+                                                      color: Colors.blue),
+                                                ),
+                                                Text(_employees[index].role,
+                                                    style: TextStyle(
+                                                        fontSize: 15)),
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Divider(
-                                      thickness: 2,
-                                    )
-                                  ],
+                                      Divider(
+                                        thickness: 2,
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        )
+                              );
+                              // } else {
+                              //   return Container();
+                            }
+                            //},
+                            )
                       ],
                     ),
                   );
@@ -170,76 +191,76 @@ class _ContactPageState extends State<ContactPage> {
 //   }
 // }
 
-class ContactWidget extends StatefulWidget {
-  final CloudEmployee employee;
-  final List<CloudEmployee> employees;
-  const ContactWidget(
-      {super.key, required this.employee, required this.employees});
+// class ContactWidget extends StatefulWidget {
+//   final CloudEmployee employee;
+//   final List<CloudEmployee> employees;
+//   const ContactWidget(
+//       {super.key, required this.employee, required this.employees});
 
-  @override
-  State<ContactWidget> createState() => _ContactWidgetState();
-}
+//   @override
+//   State<ContactWidget> createState() => _ContactWidgetState();
+// }
 
-class _ContactWidgetState extends State<ContactWidget> {
-  final _businessService = FirebaseCloudStorage();
+// class _ContactWidgetState extends State<ContactWidget> {
+//   final _businessService = FirebaseCloudStorage();
 
-  @override
-  Widget build(BuildContext context) {
-    devTools.log("Contact Widget built");
-    return InkWell(
-      onTap: () async {
-        // context.read<ContactProvider>().press(employee.id);
-        await Navigator.pushNamed(context, chatPageRoute);
-      },
-      onLongPress: () async {
-        await _businessService.deleteEmployee(
-            orgId: widget.employee.id, employee: widget.employee);
+//   @override
+//   Widget build(BuildContext context) {
+//     devTools.log("Contact Widget built");
+//     return InkWell(
+//       onTap: () async {
+//         // context.read<ContactProvider>().press(employee.id);
+//         await Navigator.pushNamed(context, chatPageRoute);
+//       },
+//       onLongPress: () async {
+//         await _businessService.deleteEmployee(
+//             orgId: widget.employee.id, employee: widget.employee);
 
-        setState(() {
-          widget.employees.remove(widget.employee);
-        });
-      },
-      child: Container(
-        //this is done to change container color to grey when clicked
-        // color: employee.pressed ? Colors.grey : Colors.white,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    child: Text(
-                      widget.employee.name[0],
-                      style: TextStyle(fontSize: 30),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.employee.name,
-                        style: TextStyle(fontSize: 25, color: Colors.blue),
-                      ),
-                      Text(widget.employee.role,
-                          style: TextStyle(fontSize: 15)),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Divider(
-              thickness: 2,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
+//         setState(() {
+//           widget.employees.remove(widget.employee);
+//         });
+//       },
+//       child: Container(
+//         //this is done to change container color to grey when clicked
+//         // color: employee.pressed ? Colors.grey : Colors.white,
+//         color: Colors.white,
+//         child: Column(
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 children: [
+//                   CircleAvatar(
+//                     radius: 30,
+//                     child: Text(
+//                       widget.employee.name[0],
+//                       style: TextStyle(fontSize: 30),
+//                     ),
+//                   ),
+//                   SizedBox(
+//                     width: 20,
+//                   ),
+//                   Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         widget.employee.name,
+//                         style: TextStyle(fontSize: 25, color: Colors.blue),
+//                       ),
+//                       Text(widget.employee.role,
+//                           style: TextStyle(fontSize: 15)),
+//                     ],
+//                   )
+//                 ],
+//               ),
+//             ),
+//             Divider(
+//               thickness: 2,
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

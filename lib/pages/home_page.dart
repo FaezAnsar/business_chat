@@ -1,19 +1,12 @@
-import 'dart:math';
-
 import 'package:business_chat/constants/routes.dart';
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/cloud_storage.dart';
-import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/pages/announcement_page.dart';
 import 'package:business_chat/pages/contact_page.dart';
-import 'package:business_chat/pop_ups/room_joined_pop_up.dart';
-import 'package:business_chat/providers/bloc/auth_bloc.dart';
-import 'package:business_chat/providers/bloc/auth_event.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:business_chat/providers/bloc/auth/auth_bloc.dart';
+import 'package:business_chat/providers/bloc/auth/auth_event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 List<String> keyList = m.keys.toList();
 
@@ -120,16 +113,17 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Colors.blue,
             actions: <Widget>[
               IconButton(
-                  onPressed: () async {
-                    context.read<AuthBloc>().add(const AuthEventLogOut());
-                  },
-                  icon: Icon(Icons.abc)),
-              IconButton(
                 icon: const Icon(Icons.search),
                 onPressed: () {
                   Navigator.pushNamed(context, searchPageRoute);
                 },
               ),
+              IconButton(
+                  onPressed: () async {
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                  icon: Icon(Icons.logout)),
             ],
           ),
           body: FutureBuilder(
@@ -147,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ]);
                 default:
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
               }
             },
           )),

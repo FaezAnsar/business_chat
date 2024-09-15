@@ -1,6 +1,5 @@
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class FirebaseCloudStorage {
   static final FirebaseCloudStorage _shared =
@@ -17,6 +16,7 @@ class FirebaseCloudStorage {
       required String owner_name,
       required int owner_cnic,
       required String email}) async {
+    final a = organisations.snapshots();
     final org = await organisations.add(
       {
         nameField: name,
@@ -195,4 +195,63 @@ class FirebaseCloudStorage {
         message: message,
         organisationId: organisationId);
   }
+
+  //CloudChat operations
+  Future<CloudMessage> sendCloudMessage(
+      {required String senderId,
+      required String receiverId,
+      required String message,
+      required String organisationId,
+      required String senderEmail}) async {
+    //DateTime now = DateTime.now();
+    Timestamp timeSent = Timestamp.now();
+    print(timeSent);
+    // Format the timestamp to display in terms of AM and PM
+    //String timeSent = DateFormat.jm().format(now);
+    final ids = [senderId, receiverId]..sort();
+    final chatId = ids.join('_');
+    final msg = await organisations
+        .doc(organisationId)
+        .collection(chatRooms)
+        .doc(chatId)
+        .collection(messages)
+        .add({
+      fromField: senderId,
+      toField: receiverId,
+      messageField: message,
+      messageSeenField: false,
+      organisationIdField: organisationId,
+      timeSentField: timeSent,
+      email: senderEmail,
+    });
+    return CloudMessage(
+        id: msg.id,
+        senderId: senderId,
+        receiverId: receiverId,
+        organisationId: organisationId,
+        timeSent: timeSent,
+        message: message);
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCurrentMessages(
+      {required String senderId,
+      required String receiverId,
+      required String organisationId}) {
+    final ids = [senderId, receiverId]..sort();
+    final chatId = ids.join('_');
+    return organisations
+        .doc(organisationId)
+        .collection(chatRooms)
+        .doc(chatId)
+        .collection(messages)
+        .orderBy(timeSentField, descending: false)
+        .snapshots();
+    //.get()
+    //.then((value) =>
+    //  value.docs.map((e) => CloudMessage.fromSnapshot(e)).toList());
+  }
 }
+
+const chatRooms = 'ChatRooms';
+const messages = 'Messages';
+const email = 'email';

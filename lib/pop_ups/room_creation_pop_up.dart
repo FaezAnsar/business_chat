@@ -1,10 +1,8 @@
 import 'package:business_chat/constants/routes.dart';
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/cloud_storage.dart';
-import 'package:business_chat/crud/database.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 Future<void> RoomCreationPopUp(BuildContext context, Map map) async {
   //final key = Uuid().v4();
@@ -30,6 +28,7 @@ Future<void> RoomCreationPopUp(BuildContext context, Map map) async {
       return AlertDialog(
         title: Text("Organisation's key"),
         content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -64,9 +63,7 @@ Future<void> RoomCreationPopUp(BuildContext context, Map map) async {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    homePageRoute, (route) => false,
-                    arguments: map);
+                Navigator.of(context).pushNamed(homePageRoute, arguments: map);
               },
               child: Text("Join Room"))
         ],

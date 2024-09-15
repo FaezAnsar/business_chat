@@ -1,18 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer' as devTools show log;
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:business_chat/announcement/announcement_pop_up.dart';
-import 'package:business_chat/announcement/announcement_widget.dart';
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/cloud_storage.dart';
-import 'package:business_chat/crud/database.dart';
 import 'package:business_chat/departments.dart';
 import 'package:business_chat/error_dialogs/general_error_dialog.dart';
-import 'package:business_chat/providers/announcement_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class AnnouncementPage extends StatefulWidget {
   String orgId;
@@ -87,7 +81,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     //devTools.log("${provider.depart.toString()}###");
 
     return Scaffold(
-        appBar: AppBar(title: Text("Announcements")),
+        // appBar: AppBar(title: Text("Announcements")),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add_alert_sharp),
             onPressed: () {
@@ -448,7 +442,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                                       ],
                                                     );
                                                   default:
-                                                    return CircularProgressIndicator();
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator());
                                                 }
                                               }));
                                     },
@@ -462,7 +458,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                 case ConnectionState.none:
                   return Text(";((()))");
                 default:
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
               }
             }));
   }

@@ -1,11 +1,7 @@
-import 'package:business_chat/announcement/announcement_class.dart';
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/cloud_storage.dart';
-import 'package:business_chat/crud/database.dart';
-import 'package:business_chat/providers/announcement_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AnnouncementWidget extends StatefulWidget {
   final CloudAnnouncement announcement;

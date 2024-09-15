@@ -1,7 +1,6 @@
 import 'package:business_chat/constants/routes.dart';
 import 'package:business_chat/crud/cloud_class.dart';
 import 'package:business_chat/crud/cloud_storage.dart';
-import 'package:business_chat/crud/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +26,7 @@ Future<void> RoomJoinedPopUp(BuildContext context, Map map) async {
           TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    homePageRoute, (route) => false,
-                    arguments: map);
+                Navigator.of(context).pushNamed(homePageRoute, arguments: map);
               },
               child: Text("Ok"))
         ],
